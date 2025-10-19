@@ -7,11 +7,11 @@ namespace five_in_one_sensor {
 static const char *const TAG = "five_in_one_sensor";
 
 void FiveInOneSensor::setup() {
-  ESP_LOGCONFIG(TAG, "Setting up Five-in-One Sensor...");
+  ESP_LOGCONFIG(TAG, "Setting up 21VOC Sensor...");
 }
 
 void FiveInOneSensor::dump_config() {
-  ESP_LOGCONFIG(TAG, "Five-in-One Sensor:");
+  ESP_LOGCONFIG(TAG, "21VOC Sensor:");
   LOG_SENSOR("  ", "VOC", this->voc_sensor_);
   LOG_SENSOR("  ", "Formaldehyde", this->formaldehyde_sensor_);
   LOG_SENSOR("  ", "eCO2", this->eco2_sensor_);
