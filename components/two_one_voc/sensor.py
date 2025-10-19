@@ -25,8 +25,8 @@ CONF_ECO2 = "eco2"
 ICON_MOLECULE_CO2 = "mdi:molecule-co2"
 ICON_CHEMICAL_WEAPON = "mdi:chemical-weapon"
 
-five_in_one_sensor_ns = cg.esphome_ns.namespace("five_in_one_sensor")
-FiveInOneSensor = five_in_one_sensor_ns.class_(
+two_one_voc_ns = cg.esphome_ns.namespace("two_one_voc")
+FiveInOneSensor = two_one_voc_ns.class_(
     "FiveInOneSensor", uart.UARTDevice, cg.Component
 )
 

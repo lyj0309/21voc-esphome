@@ -28,7 +28,7 @@ external_components:
       type: git
       url: https://github.com/lyj0309/21voc-esphome
       ref: main
-    components: [ five_in_one_sensor ]
+    components: [ two_one_voc ]
 ```
 
 ### Method 2: Local Installation
@@ -41,7 +41,7 @@ external_components:
   - source:
       type: local
       path: path/to/21voc-esphome/components
-    components: [ five_in_one_sensor ]
+    components: [ two_one_voc ]
 ```
 
 ## Configuration Example
@@ -55,7 +55,7 @@ uart:
 
 # 21VOC Sensor configuration
 sensor:
-  - platform: five_in_one_sensor
+  - platform: two_one_voc
     voc:
       name: "VOC Air Quality"
     formaldehyde:
@@ -123,7 +123,7 @@ If you need to calibrate the temperature or humidity readings due to PCB heating
 
 ```yaml
 sensor:
-  - platform: five_in_one_sensor
+  - platform: two_one_voc
     temperature:
       name: "Temperature"
       filters:

@@ -10,7 +10,7 @@ external_components:
       type: git
       url: https://github.com/lyj0309/21voc-esphome
       ref: main
-    components: [ five_in_one_sensor ]
+    components: [ two_one_voc ]
 
 uart:
   tx_pin: GPIO17  # Adjust to your setup
@@ -18,7 +18,7 @@ uart:
   baud_rate: 9600
 
 sensor:
-  - platform: five_in_one_sensor
+  - platform: two_one_voc
     voc:
       name: "Air Quality VOC"
     formaldehyde:
@@ -45,11 +45,11 @@ esphome logs your-config.yaml
 
 You should see readings like:
 ```
-[D][five_in_one_sensor:xxx]: VOC: 123 µg/m³
-[D][five_in_one_sensor:xxx]: Formaldehyde: 45 µg/m³
-[D][five_in_one_sensor:xxx]: eCO2: 678 PPM
-[D][five_in_one_sensor:xxx]: Temperature: 23.5 °C
-[D][five_in_one_sensor:xxx]: Humidity: 55.2 %
+[D][two_one_voc:xxx]: VOC: 123 µg/m³
+[D][two_one_voc:xxx]: Formaldehyde: 45 µg/m³
+[D][two_one_voc:xxx]: eCO2: 678 PPM
+[D][two_one_voc:xxx]: Temperature: 23.5 °C
+[D][two_one_voc:xxx]: Humidity: 55.2 %
 ```
 
 ## Hardware Connection
@@ -84,7 +84,7 @@ You should see readings like:
 Use ESPHome filters:
 ```yaml
 sensor:
-  - platform: five_in_one_sensor
+  - platform: two_one_voc
     temperature:
       name: "Temperature"
       filters:
@@ -97,7 +97,7 @@ You don't need to configure all sensors. Only add what you need:
 
 ```yaml
 sensor:
-  - platform: five_in_one_sensor
+  - platform: two_one_voc
     temperature:
       name: "Temperature"
     humidity:

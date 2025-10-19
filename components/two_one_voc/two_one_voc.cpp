@@ -1,10 +1,10 @@
-#include "five_in_one_sensor.h"
+#include "two_one_voc.h"
 #include "esphome/core/log.h"
 
 namespace esphome {
-namespace five_in_one_sensor {
+namespace two_one_voc {
 
-static const char *const TAG = "five_in_one_sensor";
+static const char *const TAG = "two_one_voc";
 
 void FiveInOneSensor::setup() {
   ESP_LOGCONFIG(TAG, "Setting up 21VOC Sensor...");
@@ -137,5 +137,5 @@ bool FiveInOneSensor::parse_data_() {
   return true;
 }
 
-}  // namespace five_in_one_sensor
+}  // namespace two_one_voc
 }  // namespace esphome

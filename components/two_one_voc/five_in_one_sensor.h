@@ -6,7 +6,7 @@
 #include "esphome/components/uart/uart.h"
 
 namespace esphome {
-namespace five_in_one_sensor {
+namespace two_one_voc {
 
 static const uint8_t PACKET_SIZE = 12;
 static const uint8_t HEADER_BYTE = 0x2C;
@@ -46,5 +46,5 @@ class FiveInOneSensor : public uart::UARTDevice, public Component {
   std::vector<uint8_t> rx_buffer_;
 };
 
-}  // namespace five_in_one_sensor
+}  // namespace two_one_voc
 }  // namespace esphome

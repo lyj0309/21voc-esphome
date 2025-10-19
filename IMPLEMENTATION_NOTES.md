@@ -76,7 +76,7 @@ This ensures data integrity during transmission.
 
 ## Implementation Details
 
-### C++ Component (`five_in_one_sensor.cpp` / `.h`)
+### C++ Component (`two_one_voc.cpp` / `.h`)
 
 The component inherits from:
 - `uart::UARTDevice` - For UART communication

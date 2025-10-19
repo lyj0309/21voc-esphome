@@ -34,7 +34,7 @@ external_components:
 
 # 21VOC Sensor configuration
 sensor:
-  - platform: five_in_one_sensor
+  - platform: two_one_voc
     voc:
       name: "VOC"
       id: voc_sensor
