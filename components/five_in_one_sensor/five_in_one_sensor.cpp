@@ -69,8 +69,9 @@ bool FiveInOneSensor::validate_checksum_(const uint8_t *data) {
 int16_t FiveInOneSensor::parse_temperature_(uint16_t raw_value) {
   // Check if temperature is negative (MSB is 1)
   if (raw_value & 0x8000) {
-    // Negative temperature: 0xFFFF - raw_value, then negate
-    return -static_cast<int16_t>(0xFFFF - raw_value + 1);
+    // Negative temperature: -(0xFFFF - raw_value)
+    // Example: -10°C = 0xFFF5, 0xFFFF - 0xFFF5 = 0x000A = 10, then negate = -10
+    return -static_cast<int16_t>(0xFFFF - raw_value);
   }
   return static_cast<int16_t>(raw_value);
 }
