@@ -1,6 +1,6 @@
-# Five-in-One Sensor Component for ESPHome
+# 21VOC Sensor Component for ESPHome
 
-ESPHome external component for a 5-in-1 environmental sensor module that measures:
+ESPHome external component for a 21VOC environmental sensor module that measures:
 - **VOC** (Volatile Organic Compounds) - Air quality in µg/m³
 - **Formaldehyde** - Concentration in µg/m³
 - **eCO2** - Equivalent CO2 in PPM
@@ -53,7 +53,7 @@ uart:
   rx_pin: GPIO16
   baud_rate: 9600
 
-# Five-in-One Sensor configuration
+# 21VOC Sensor configuration
 sensor:
   - platform: five_in_one_sensor
     voc:
@@ -176,4 +176,4 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ## Credits
 
-Developed based on the 5-in-1 sensor module serial protocol documentation.
+Developed based on the 21VOC sensor module serial protocol documentation.

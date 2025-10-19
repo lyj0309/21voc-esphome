@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains an ESPHome external component for a 5-in-1 environmental sensor module. The component implements the serial protocol specified in the Chinese documentation.
+This repository contains an ESPHome external component for a 21VOC environmental sensor module. The component implements the serial protocol specified in the Chinese documentation.
 
 ## Protocol Details
 
