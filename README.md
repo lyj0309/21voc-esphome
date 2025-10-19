@@ -104,8 +104,18 @@ The module sends 12-byte data packets with the following structure:
 
 The temperature value uses special encoding for negative values:
 - If the MSB (bit 15) is 1, the temperature is negative
-- Negative values are calculated as: -(0xFFFF - raw_value + 1)
+- Negative values are calculated as: `magnitude = 0xFFFF - raw_value`, then apply negative sign
 - The final temperature is multiplied by 0.1 to get the actual value in °C
+
+**Example:**
+- Raw value: 0xFFF5
+- Calculation: 0xFFFF - 0xFFF5 = 0x000A = 10 units
+- With negative sign: -10 units
+- Actual temperature: -10 × 0.1 = -1.0°C
+
+**For -10.0°C:**
+- Need: -100 units (since -100 × 0.1 = -10.0°C)
+- Encoded as: 0xFFFF - 100 = 0xFF9B
 
 ### Calibration
 
