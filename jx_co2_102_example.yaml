@@ -1,0 +1,40 @@
+esphome:
+  name: jx-co2-102-example
+  friendly_name: JX-CO2-102 CO2 Sensor Example
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+  level: DEBUG
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+# UART configuration for the JX-CO2-102 sensor (9600 baud, 8N1)
+uart:
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 9600
+
+# External components - update the source path as needed
+external_components:
+  - source:
+      type: local
+      path: components
+
+# JX-CO2-102 Infrared CO2 Sensor configuration
+sensor:
+  - platform: jx_co2_102
+    co2:
+      name: "CO2"
+      id: co2_sensor
