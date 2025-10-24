@@ -1,10 +1,4 @@
-# ESPHome Sensor Components
-
-This repository contains ESPHome external components for various environmental sensors.
-
-## Available Components
-
-### 1. 21VOC Sensor Component (`two_one_voc`)
+# 21VOC Sensor Component for ESPHome
 
 ESPHome external component for a 21VOC environmental sensor module that measures:
 - **VOC** (Volatile Organic Compounds) - Air quality in µg/m³
@@ -12,106 +6,6 @@ ESPHome external component for a 21VOC environmental sensor module that measures
 - **eCO2** - Equivalent CO2 in PPM
 - **Temperature** - In °C with 0.1° precision
 - **Humidity** - In %RH with 0.1% precision
-
-**[Full documentation for 21VOC sensor](./ORIGINAL_21VOC_README.md)**
-
-### 2. JX-CO2-102 Infrared CO2 Sensor Component (`jx_co2_102`)
-
-ESPHome external component for the JX-CO2-102 series infrared CO2 sensor using NDIR technology that measures:
-- **CO2** - Carbon dioxide concentration in PPM (0-5000/10000/30000/50000 ppm depending on model)
-
-Features:
-- High accuracy: ±50ppm or ±5% F.S at 25°C
-- Fast response: <30s response time
-- NDIR technology: Non-dispersive infrared detection
-- Multiple range options: 5K/10K/30K/50K ppm models available
-
-**[Full documentation for JX-CO2-102 sensor](./JX_CO2_102_README.md)**
-
-## Quick Start
-
-### 21VOC Sensor
-
-### Method 1: Using as External Component (Recommended)
-
-Add this to your ESPHome YAML configuration:
-
-```yaml
-external_components:
-  - source:
-      type: git
-      url: https://github.com/lyj0309/component-esphome
-      ref: main
-    components: [ two_one_voc ]
-
-uart:
-  tx_pin: GPIO17
-  rx_pin: GPIO16
-  baud_rate: 9600
-
-sensor:
-  - platform: two_one_voc
-    voc:
-      name: "VOC Air Quality"
-    formaldehyde:
-      name: "Formaldehyde"
-    eco2:
-      name: "eCO2"
-    temperature:
-      name: "Temperature"
-    humidity:
-      name: "Humidity"
-```
-
-### JX-CO2-102 Sensor
-
-```yaml
-external_components:
-  - source:
-      type: git
-      url: https://github.com/lyj0309/component-esphome
-      ref: main
-    components: [ jx_co2_102 ]
-
-uart:
-  rx_pin: GPIO16  # Connect to sensor TX pin
-  baud_rate: 9600
-
-sensor:
-  - platform: jx_co2_102
-    co2:
-      name: "CO2 Concentration"
-```
-
-## Installation
-
-### Method 1: Using as External Component (Recommended)
-
-See Quick Start examples above for each sensor.
-
-### Method 2: Local Installation
-
-1. Clone this repository to your ESPHome configuration directory
-2. Reference it as a local external component:
-
-```yaml
-external_components:
-  - source:
-      type: local
-      path: path/to/component-esphome/components
-    components: [ two_one_voc, jx_co2_102 ]  # Choose components you need
-```
-
-## Detailed Documentation
-
-For complete documentation, configuration options, troubleshooting, and technical details:
-
-- **21VOC Sensor**: See [21VOC Documentation](./ORIGINAL_21VOC_README.md) or the sections below
-- **JX-CO2-102 Sensor**: See [JX-CO2-102 Documentation](./JX_CO2_102_README.md)
-
----
-
-# 21VOC Sensor - Detailed Information
 
 ## Hardware Specifications
 
@@ -122,7 +16,35 @@ For complete documentation, configuration options, troubleshooting, and technica
 - **Parity**: None
 - **Data Format**: 12-byte packets sent actively by the module
 
-## Configuration Example for 21VOC
+## Installation
+
+### Method 1: Using as External Component (Recommended)
+
+Add this to your ESPHome YAML configuration:
+
+```yaml
+external_components:
+  - source:
+      type: git
+      url: https://github.com/lyj0309/21voc-esphome
+      ref: main
+    components: [ two_one_voc ]
+```
+
+### Method 2: Local Installation
+
+1. Clone this repository to your ESPHome configuration directory
+2. Reference it as a local external component:
+
+```yaml
+external_components:
+  - source:
+      type: local
+      path: path/to/21voc-esphome/components
+    components: [ two_one_voc ]
+```
+
+## Configuration Example
 
 ```yaml
 # UART configuration for the sensor
