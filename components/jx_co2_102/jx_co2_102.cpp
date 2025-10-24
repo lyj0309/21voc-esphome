@@ -93,7 +93,8 @@ bool JXCO2102Sensor::parse_ascii_data_() {
   }
   
   // Validate range (0-50000 ppm based on spec)
-  if (parsed_value > 50000) {
+  // CO2 values cannot be negative, and max range is 50000 ppm
+  if (parsed_value < 0 || parsed_value > 50000) {
     ESP_LOGW(TAG, "CO2 value out of range: %ld ppm", parsed_value);
     return false;
   }
