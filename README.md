@@ -28,6 +28,24 @@ Features:
 
 **[Full documentation for JX-CO2-102 sensor](./JX_CO2_102_README.md)**
 
+### 3. PM2005 Laser Particle Sensor Component (`pm2005`)
+
+ESPHome external component for the PM2005 laser particle sensor module that measures:
+- **PM0.5** - Particle count for 0.5μm particles in PCS/L
+- **PM2.5** - Particle count for 2.5μm particles in PCS/L
+- **PM10** - Particle count for 10μm particles in PCS/L
+- **PM2.5 Mass** - Mass concentration in μg/m³
+- **PM10 Mass** - Mass concentration in μg/m³
+
+Features:
+- Smallest detectable particle: 0.3μm
+- Accuracy: ±15% reading
+- Fast response: 5 seconds
+- Temperature range: 0-45°C (with full temperature correction)
+- UART-TTL communication (9600 baud, 8N1)
+
+**[Full documentation for PM2005 sensor](./PM2005_README.md)**
+
 ## Quick Start
 
 ### 21VOC Sensor
@@ -83,6 +101,35 @@ sensor:
       name: "CO2 Concentration"
 ```
 
+### PM2005 Sensor
+
+```yaml
+external_components:
+  - source:
+      type: git
+      url: https://github.com/lyj0309/component-esphome
+      ref: main
+    components: [ pm2005 ]
+
+uart:
+  tx_pin: GPIO17  # Connect to sensor RX pin
+  rx_pin: GPIO16  # Connect to sensor TX pin
+  baud_rate: 9600
+
+sensor:
+  - platform: pm2005
+    pm_0_5:
+      name: "PM0.5 Particles"
+    pm_2_5:
+      name: "PM2.5 Particles"
+    pm_10_0:
+      name: "PM10 Particles"
+    pm_2_5_mass:
+      name: "PM2.5 Mass"
+    pm_10_0_mass:
+      name: "PM10 Mass"
+```
+
 ## Installation
 
 ### Method 1: Using as External Component (Recommended)
@@ -99,7 +146,7 @@ external_components:
   - source:
       type: local
       path: path/to/component-esphome/components
-    components: [ two_one_voc, jx_co2_102 ]  # Choose components you need
+    components: [ two_one_voc, jx_co2_102, pm2005 ]  # Choose components you need
 ```
 
 ## Detailed Documentation
@@ -108,6 +155,7 @@ For complete documentation, configuration options, troubleshooting, and technica
 
 - **21VOC Sensor**: See [21VOC Documentation](./ORIGINAL_21VOC_README.md) or the sections below
 - **JX-CO2-102 Sensor**: See [JX-CO2-102 Documentation](./JX_CO2_102_README.md)
+- **PM2005 Sensor**: See [PM2005 Documentation](./PM2005_README.md)
 
 ---
 
