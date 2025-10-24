@@ -65,7 +65,7 @@ void PM2005Sensor::loop() {
   switch (this->state_) {
     case PM2005_STATE_IDLE:
       // Start measurement every 60 seconds
-      if (now - this->last_measurement_time_ > 60000) {
+      if (now - this->last_measurement_time_ > PM2005_MEASUREMENT_INTERVAL) {
         this->open_measurement_();
         this->state_ = PM2005_STATE_WAIT_RESPONSE;
         this->last_command_time_ = now;
@@ -75,7 +75,7 @@ void PM2005Sensor::loop() {
       
     case PM2005_STATE_WAIT_RESPONSE:
       // Wait for response (timeout after 1 second)
-      if (now - this->last_command_time_ > 1000) {
+      if (now - this->last_command_time_ > PM2005_RESPONSE_TIMEOUT) {
         ESP_LOGW(TAG, "Command timeout, returning to idle");
         this->state_ = PM2005_STATE_IDLE;
       }
@@ -83,8 +83,17 @@ void PM2005Sensor::loop() {
       
     case PM2005_STATE_MEASURING:
       // Wait 36 seconds for measurement to complete, then read data
-      if (now - this->last_command_time_ > 36000) {
+      if (now - this->last_command_time_ > PM2005_MEASUREMENT_TIME) {
         this->read_particle_data_();
+        this->last_command_time_ = now;
+        this->state_ = PM2005_STATE_WAIT_RESPONSE;
+      }
+      break;
+      
+    case PM2005_STATE_DELAY_BEFORE_MASS:
+      // Wait before sending mass data request to avoid UART conflicts
+      if (now - this->last_command_time_ > PM2005_COMMAND_DELAY) {
+        this->read_mass_data_();
         this->last_command_time_ = now;
         this->state_ = PM2005_STATE_WAIT_RESPONSE;
       }
@@ -212,10 +221,9 @@ bool PM2005Sensor::parse_response_() {
       this->pm_10_0_sensor_->publish_state(pm_10_0);
     }
     
-    // Now read mass data
-    this->read_mass_data_();
+    // Schedule mass data read with delay to avoid UART conflicts
     this->last_command_time_ = millis();
-    this->state_ = PM2005_STATE_WAIT_RESPONSE;
+    this->state_ = PM2005_STATE_DELAY_BEFORE_MASS;
     
     return true;
   } else if (cmd == PM2005_CMD_READ_MASS && len >= 17) {

@@ -25,11 +25,18 @@ static const uint8_t PM2005_CMD_READ_MASS = 0x0B;
 static const uint8_t PM2005_RESP_HEADER_LEN = 3;  // HEADER + LEN + CMD
 static const uint8_t PM2005_PARTICLE_DATA_LEN = 18;  // Full response length
 
+// Timing constants (in milliseconds)
+static const uint32_t PM2005_MEASUREMENT_TIME = 36000;  // 36 seconds measurement time
+static const uint32_t PM2005_COMMAND_DELAY = 500;  // Delay between commands
+static const uint32_t PM2005_MEASUREMENT_INTERVAL = 60000;  // 60 seconds between measurements
+static const uint32_t PM2005_RESPONSE_TIMEOUT = 1000;  // 1 second timeout for responses
+
 // Measurement states
 enum PM2005State {
   PM2005_STATE_IDLE = 0,
   PM2005_STATE_WAIT_RESPONSE = 1,
   PM2005_STATE_MEASURING = 2,
+  PM2005_STATE_DELAY_BEFORE_MASS = 3,
 };
 
 class PM2005Sensor : public uart::UARTDevice, public Component {
