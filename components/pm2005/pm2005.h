@@ -67,7 +67,6 @@ class PM2005Sensor : public uart::UARTDevice, public Component {
   uint32_t last_measurement_time_{0};
   uint32_t last_command_time_{0};
   bool measuring_{false};
-  bool read_mass_next_{false};
 };
 
 }  // namespace pm2005

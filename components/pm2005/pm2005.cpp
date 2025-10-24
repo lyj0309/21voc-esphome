@@ -82,21 +82,11 @@ void PM2005Sensor::loop() {
       break;
       
     case PM2005_STATE_MEASURING:
-      // Read particle data after 36 seconds of measurement
+      // Wait 36 seconds for measurement to complete, then read data
       if (now - this->last_command_time_ > 36000) {
         this->read_particle_data_();
         this->last_command_time_ = now;
-        this->read_mass_next_ = false;
-      }
-      // After reading particle data, wait a bit then read mass data
-      else if (!this->read_mass_next_ && now - this->last_command_time_ > 500) {
-        this->read_mass_data_();
-        this->read_mass_next_ = true;
-        this->last_command_time_ = now;
-      }
-      // After reading mass data, wait a bit then return to idle
-      else if (this->read_mass_next_ && now - this->last_command_time_ > 500) {
-        this->state_ = PM2005_STATE_IDLE;
+        this->state_ = PM2005_STATE_WAIT_RESPONSE;
       }
       break;
   }
@@ -110,8 +100,10 @@ void PM2005Sensor::send_command_(uint8_t cmd, const uint8_t *data, uint8_t data_
   buffer[idx++] = data_len + 1;  // Length includes CMD
   buffer[idx++] = cmd;
   
-  for (uint8_t i = 0; i < data_len; i++) {
-    buffer[idx++] = data[i];
+  if (data != nullptr && data_len > 0) {
+    for (uint8_t i = 0; i < data_len; i++) {
+      buffer[idx++] = data[i];
+    }
   }
   
   // Calculate checksum: 256 - (sum of all bytes except checksum)
@@ -220,6 +212,11 @@ bool PM2005Sensor::parse_response_() {
       this->pm_10_0_sensor_->publish_state(pm_10_0);
     }
     
+    // Now read mass data
+    this->read_mass_data_();
+    this->last_command_time_ = millis();
+    this->state_ = PM2005_STATE_WAIT_RESPONSE;
+    
     return true;
   } else if (cmd == PM2005_CMD_READ_MASS && len >= 17) {
     // Parse mass data (μg/m³)
@@ -244,6 +241,9 @@ bool PM2005Sensor::parse_response_() {
     if (this->pm_10_0_mass_sensor_ != nullptr) {
       this->pm_10_0_mass_sensor_->publish_state(pm_10_0_mass);
     }
+    
+    // Done with this measurement cycle, return to idle
+    this->state_ = PM2005_STATE_IDLE;
     
     return true;
   }
