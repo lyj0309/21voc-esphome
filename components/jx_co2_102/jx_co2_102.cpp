@@ -84,7 +84,7 @@ bool JXCO2102Sensor::parse_ascii_data_() {
   
   // Parse the number
   char *endptr;
-  long co2_value = strtol(num_str.c_str(), &endptr, 10);
+  long parsed_value = strtol(num_str.c_str(), &endptr, 10);
   
   // Check if parsing was successful
   if (endptr == num_str.c_str() || *endptr != '\0') {
@@ -93,17 +93,19 @@ bool JXCO2102Sensor::parse_ascii_data_() {
   }
   
   // Validate range (0-50000 ppm based on spec)
-  if (co2_value < 0 || co2_value > 50000) {
-    ESP_LOGW(TAG, "CO2 value out of range: %ld ppm", co2_value);
+  if (parsed_value > 50000) {
+    ESP_LOGW(TAG, "CO2 value out of range: %ld ppm", parsed_value);
     return false;
   }
+  
+  int co2_value = static_cast<int>(parsed_value);
   
   // Publish the value
   if (this->co2_sensor_ != nullptr) {
     this->co2_sensor_->publish_state(co2_value);
   }
   
-  ESP_LOGD(TAG, "CO2: %ld ppm", co2_value);
+  ESP_LOGD(TAG, "CO2: %d ppm", co2_value);
   
   return true;
 }
