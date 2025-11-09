@@ -35,6 +35,16 @@ external_components:
 # JX-CO2-102 Infrared CO2 Sensor configuration
 sensor:
   - platform: jx_co2_102
+    id: co2_sensor_id
     co2:
       name: "CO2"
-      id: co2_sensor
+
+# Button to trigger manual calibration
+# IMPORTANT: Only press this after sensor has warmed up for 10+ minutes
+# in outdoor or well-ventilated area (ambient CO2 ≈ 400ppm)
+button:
+  - platform: template
+    name: "Calibrate CO2 Sensor to 400ppm"
+    on_press:
+      - logger.log: "Starting CO2 sensor calibration..."
+      - jx_co2_102.calibrate_zero: co2_sensor_id
