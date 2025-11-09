@@ -155,10 +155,47 @@ In Active ASCII Reporting Mode (default):
 
 The sensor supports two calibration modes for zeroing at 400ppm (outdoor ambient CO2 level):
 
-#### 1. Manual Quick Calibration
+#### 1. Manual Quick Calibration (Now Supported!)
+This component now supports manual calibration directly from ESPHome!
+
+**Prerequisites:**
 - Place sensor outdoors or in well-ventilated area (ambient CO2 ≈ 400ppm)
 - Allow 10 minutes for warm-up and gas diffusion
-- Send calibration command via UART (requires custom protocol mode)
+- Ensure sensor has been running continuously for at least 30 minutes
+
+**How to Use:**
+
+Add a button to your ESPHome configuration:
+
+```yaml
+button:
+  - platform: template
+    name: "Calibrate CO2 Sensor"
+    on_press:
+      - jx_co2_102.calibrate_zero:
+          id: co2_sensor_id
+```
+
+Or trigger it via an automation:
+
+```yaml
+sensor:
+  - platform: jx_co2_102
+    id: co2_sensor_id
+    co2:
+      name: "CO2"
+
+button:
+  - platform: template
+    name: "Calibrate CO2 to 400ppm"
+    on_press:
+      - jx_co2_102.calibrate_zero: co2_sensor_id
+```
+
+**Technical Details:**
+- Command sent: `FF 01 05 07 00 00 00 00 F4`
+- Success response: `FF 01 03 07 01 00 00 00 F5`
+- Calibrates sensor to 400ppm reference point
 - Suitable for: Office and home environments
 - **Not suitable for**: Greenhouses, farms, cold storage, etc.
 
@@ -166,11 +203,9 @@ The sensor supports two calibration modes for zeroing at 400ppm (outdoor ambient
 - Automatically calibrates once every 24 hours
 - Disabled by default
 - Best for long-term outdoor installations
-- Must be enabled via UART command (requires custom protocol mode)
+- Must be enabled via UART command (requires additional implementation)
 
-**Note**: The current implementation uses Active ASCII Reporting Mode and does not support sending calibration commands. For calibration, you may need to use the manufacturer's tool or implement MODBUS-RTU mode.
-
-**Recommendation**: Manually calibrate the sensor every 6 months for best accuracy.
+**Recommendation**: Manually calibrate the sensor every 6 months for best accuracy using the calibrate_zero action.
 
 ## PWM Output (Alternative Interface)
 

@@ -6,6 +6,14 @@ namespace jx_co2_102 {
 
 static const char *const TAG = "jx_co2_102";
 
+// Command to start manual quick calibration (calibrate to 400ppm)
+// Format: FF 01 05 07 00 00 00 00 F4
+static const uint8_t JX_CO2_CMD_CALIBRATE[9] = {0xFF, 0x01, 0x05, 0x07, 0x00, 0x00, 0x00, 0x00, 0xF4};
+
+// Expected response for successful calibration
+// Format: FF 01 03 07 01 00 00 00 F5
+static const uint8_t JX_CO2_CALIBRATE_RESPONSE[9] = {0xFF, 0x01, 0x03, 0x07, 0x01, 0x00, 0x00, 0x00, 0xF5};
+
 void JXCO2102Sensor::setup() {
   ESP_LOGCONFIG(TAG, "Setting up JX-CO2-102 Sensor...");
 }
@@ -14,6 +22,12 @@ void JXCO2102Sensor::dump_config() {
   ESP_LOGCONFIG(TAG, "JX-CO2-102 Infrared CO2 Sensor:");
   LOG_SENSOR("  ", "CO2", this->co2_sensor_);
   this->check_uart_settings(9600);
+}
+
+void JXCO2102Sensor::update() {
+  // This is called periodically by PollingComponent
+  // For this sensor, we don't need to do anything here as data comes in automatically
+  // The loop() method handles incoming data
 }
 
 void JXCO2102Sensor::loop() {
@@ -41,6 +55,84 @@ void JXCO2102Sensor::loop() {
     ESP_LOGW(TAG, "Buffer overflow, clearing");
     this->rx_buffer_.clear();
   }
+}
+
+uint8_t JXCO2102Sensor::jx_co2_checksum_(const uint8_t *data, uint8_t len) {
+  // Calculate checksum for JX-CO2-102 command packets
+  // The checksum is the last byte and should make the sum of all bytes equal to 0x00
+  uint8_t sum = 0;
+  for (uint8_t i = 0; i < len - 1; i++) {
+    sum += data[i];
+  }
+  return (0x100 - sum) & 0xFF;
+}
+
+bool JXCO2102Sensor::jx_co2_write_command_(const uint8_t *command, uint8_t command_len, uint8_t *response,
+                                            uint8_t response_len) {
+  // Empty RX Buffer first
+  while (this->available())
+    this->read();
+
+  // Write command to UART
+  this->write_array(command, command_len);
+  this->flush();
+
+  if (response == nullptr)
+    return true;
+
+  // Wait for response with timeout
+  uint32_t start_time = millis();
+  uint8_t pos = 0;
+
+  while (pos < response_len) {
+    if (millis() - start_time > 1000) {  // 1 second timeout
+      ESP_LOGW(TAG, "Timeout waiting for response");
+      return false;
+    }
+
+    if (this->available()) {
+      this->read_byte(&response[pos]);
+      pos++;
+    } else {
+      delay(10);
+    }
+  }
+
+  return true;
+}
+
+void JXCO2102Sensor::calibrate_zero() {
+  ESP_LOGI(TAG, "Starting manual calibration to 400ppm...");
+  ESP_LOGI(TAG, "Please ensure sensor has been running for 10+ minutes in outdoor/well-ventilated area");
+
+  uint8_t response[9] = {0};
+
+  if (!this->jx_co2_write_command_(JX_CO2_CMD_CALIBRATE, sizeof(JX_CO2_CMD_CALIBRATE), response,
+                                     sizeof(response))) {
+    ESP_LOGW(TAG, "Failed to send calibration command!");
+    this->status_set_warning();
+    return;
+  }
+
+  // Check if correct response received
+  bool success = true;
+  for (uint8_t i = 0; i < sizeof(response); i++) {
+    if (response[i] != JX_CO2_CALIBRATE_RESPONSE[i]) {
+      success = false;
+      break;
+    }
+  }
+
+  if (!success) {
+    ESP_LOGW(TAG, "Got wrong response from JX-CO2-102. Expected: FF 01 03 07 01 00 00 00 F5");
+    ESP_LOGW(TAG, "Got: %02X %02X %02X %02X %02X %02X %02X %02X %02X", response[0], response[1], response[2],
+             response[3], response[4], response[5], response[6], response[7], response[8]);
+    this->status_set_warning();
+    return;
+  }
+
+  this->status_clear_warning();
+  ESP_LOGI(TAG, "JX-CO2-102 calibration successful! Sensor calibrated to 400ppm");
 }
 
 bool JXCO2102Sensor::parse_ascii_data_() {
